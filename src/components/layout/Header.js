@@ -1,7 +1,7 @@
 import React from 'react';
 // to check props type
 import PropTypes from 'prop-types';
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 // active link will add "active" attributes to the className
 // when it is no the page
 
@@ -11,7 +11,7 @@ const Header = (props) => {
   return (
     <nav className="navbar navbar-expand-sm navbar-dark bg-primary mb-3 py-0">
       <div className="container">
-        <a href="/" className="navbar-brand">{branding}</a>
+        <Link to="/" className="navbar-brand">{branding}</Link>
         <div>
           <ul className="navbar-nav mr-auto">
             <li className="nav-item">
