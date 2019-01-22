@@ -26,7 +26,7 @@ class EditContact extends Component {
   async componentDidMount() {
     // take the params from get url params
     const { id } = this.props.match.params;
-    const res = await axios.get(`http://jsonplaceholder.typicode.com/users/${id}`);
+    const res = await axios.get(`https://jsonplaceholder.typicode.com/users/${id}`);
     const contact = res.data;
     this.setState({
       name: contact.name,
