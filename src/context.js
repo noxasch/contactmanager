@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 
 // Application State Provider or Storage
 
@@ -19,6 +20,13 @@ function reducer(state, action) {
         ...state,
         contacts: [action.payload, ...state.contacts]
       };
+    case 'UPDATE_CONTACT':
+      return {
+        ...state,
+        contacts: state.contacts.map((contact) => 
+            contact.id === action.payload.id ? (contact = action.payload) : contact
+        )
+      };
     default:
       return state;
   }
@@ -31,30 +39,19 @@ export class Provider extends Component {
     // but it can be anything from a database or backend
     // this is just dummy or test data
     contacts: [
-      {
-        id: 1,
-        name: 'John Doe',
-        email: 'jdoe@gmail.com',
-        phone: '555-555-5555'
-      },
-      {
-        id: 2,
-        name: 'James McAvoy',
-        email: 'james@gmail.com',
-        phone: '222-222-2222'
-      },
-      {
-        id: 3,
-        name: 'Henry Carvil',
-        email: 'henry@gmail.com',
-        phone: '666-666-6666'
-      }
+      // replaced with jsonplaceholderapi
     ],
 
     dispatch: (action) => {
       this.setState((state) => reducer(state, action))
     }
-  };
+  }
+
+  async componentDidMount(){
+    // using axios
+    const res = await axios.get('http://jsonplaceholder.typicode.com/users');
+    this.setState({contacts: res.data});
+  }
 
   render() {
     // we pass in what we want to be available troughout our app

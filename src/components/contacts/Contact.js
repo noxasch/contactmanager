@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Consumer } from '../../context';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 class Contact extends Component {
   state = {
@@ -11,14 +13,20 @@ class Contact extends Component {
     this.setState({ showContactInfo: !this.state.showContactInfo}); 
   };
 
-  onDeleteClick(id, dispatch) {
-    console.log();
-    console.log(dispatch);
+  async onDeleteClick(id, dispatch) {
     console.log('clicked');
-    // so we pass in the action in dispatch
-    dispatch({type: 'DELETE_CONTACT', payload: id});
-    // this.props.deleteClickHandler();
+
+    const res = await axios.delete(`https://jsonplaceholder.typicode.com/users/${id}`);
+
+    res.status === 200 && dispatch({type: 'DELETE_CONTACT', payload: id});
   }
+
+  // async arrow function 
+  /* 
+  onDeleteClick = async (id, dispatch) => {
+    ...
+  }
+  */
 
   render() {
     // destructring the props
@@ -39,6 +47,17 @@ class Contact extends Component {
             <h4>{name} 
               <i onClick={this.onShowClick.bind(this, id)} className="fas fa-sort-down" style={{cursor: 'pointer'}}></i>
               <i className="fas fa-times" style={{cursor: 'pointer', float: 'right', color: 'red'}} onClick={this.onDeleteClick.bind(this, id, dispatch)}></i>
+              <Link to={`contact/edit/${id}`}>
+                <i className="fas fa-pencil-alt" 
+                style={{
+                  // this should be in css in js property
+                  cursor: 'pointer',
+                  float: 'right',
+                  color: 'black',
+                  marginRight: '1rem'
+
+                }}></i>
+              </Link>
             </h4>
             <ul className="list-group" style={display}>
               <li className="list-group-item">Email: {email}</li>

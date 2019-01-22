@@ -7,7 +7,7 @@ import axios from 'axios';
 
 // Controlled Component with onchange
 
-class AddContact extends Component {
+class EditContact extends Component {
   signal = axios.CancelToken.source();
 
   state = {
@@ -21,6 +21,18 @@ class AddContact extends Component {
 
   componentWillUnmount() {
     this.signal.cancel('Api is being canceled');
+  }
+
+  async componentDidMount() {
+    // take the params from get url params
+    const { id } = this.props.match.params;
+    const res = await axios.get(`http://jsonplaceholder.typicode.com/users/${id}`);
+    const contact = res.data;
+    this.setState({
+      name: contact.name,
+      email: contact.email,
+      phone: contact.phone
+    })
   }
 
   // handling input
@@ -41,10 +53,12 @@ class AddContact extends Component {
   async onSubmit(value, e) {
     e.preventDefault();
 
+    const { id } = this.props.match.params; 
     const { name, email, phone, errors } = this.state;
     const { dispatch } = value;
 
-    const newContact = {
+    const updateContact = {
+      id,
       name, 
       email,
       phone
@@ -70,10 +84,11 @@ class AddContact extends Component {
     // redirect should be after all the state has been change or check 
     // otherwise it can cause memory leak warning
     if (name.trim() && email.trim() && phone.trim()) {
-      const res = await axios.post('https://jsonplaceholder.typicode.com/users', newContact);
-      // 201 is created
-      if(res.status === 201){
-        dispatch({type: 'ADD_CONTACT', payload: res.data });
+      const res = await axios.put(`https://jsonplaceholder.typicode.com/users/${id}`, updateContact);
+
+      if(res.status === 200){
+        dispatch({type: 'UPDATE_CONTACT', payload: res.data });
+        this.clearState();
         this.props.history.push('/');
       }
     }
@@ -106,7 +121,7 @@ class AddContact extends Component {
               // the input field is unmutable
               // to change this behavior we must bind it to onchange event
               <div className="card mb-3">
-              <div className="card-header">Add Contact</div>
+              <div className="card-header">Edit Contact</div>
               <div className="card-body">
                 {/* using onSubmit() handler */}
                 <form onSubmit={this.onSubmit.bind(this, value)}>
@@ -131,7 +146,7 @@ class AddContact extends Component {
                         }
                       )
                   }
-                  <input type="submit" value="Add Contact" className="btn btn-primary btn-block"/>
+                  <input type="submit" value="Update Contact" className="btn btn-primary btn-block"/>
                 </form>
               </div>
             </div>
@@ -143,4 +158,4 @@ class AddContact extends Component {
   }
 }
 
-export default AddContact;
+export default EditContact;
